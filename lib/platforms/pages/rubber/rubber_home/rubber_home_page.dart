@@ -35,6 +35,7 @@ class _RubberHomePageState extends State<RubberHomePage> {
 
   Future<void> init() async {
     await con.fetchList(widget.site.id);
+    await sellRecCon.fetchList(widget.site.id);
   }
 
   int? get currentDayRubberSlice {

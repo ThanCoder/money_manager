@@ -1,3 +1,4 @@
+import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:money_manager/core/controller/i_controller.dart';
 import 'package:money_manager/core/controller/rubber_sell_record_controller.dart';
@@ -28,47 +29,11 @@ class _RubberSellHomePageState extends State<RubberSellHomePage> {
   void initState() {
     super.initState();
 
-    // records = [
-    //   RubberSellRecord(
-    //     id: '1',
-    //     workSiteId: widget.site.id,
-    //     rubberDailyWorkIds: ['work-1', 'work-2', 'work-3'],
-    //     weight: 82.5,
-    //     pricePerUnit: 1850,
-    //     weightUnit: .pound,
-    //     sellMoney: 152625,
-    //     workerSellMoney: 100000,
-    //     buyer: 'ဦးကျော်',
-    //     note: '',
-    //     date: DateTime(2026, 10, 7),
-    //   ),
-    //   RubberSellRecord(
-    //     id: '2',
-    //     workSiteId: widget.site.id,
-    //     rubberDailyWorkIds: ['work-4', 'work-5'],
-    //     weight: 64,
-    //     pricePerUnit: 1800,
-    //     weightUnit: .pound,
-    //     sellMoney: 115200,
-    //     workerSellMoney: 100000,
-    //     buyer: 'ကိုမောင်',
-    //     note: 'မနက်ပိုင်း ရောင်း',
-    //     date: DateTime(2026, 10, 3),
-    //   ),
-    //   RubberSellRecord(
-    //     id: '3',
-    //     workSiteId: widget.site.id,
-    //     rubberDailyWorkIds: ['work-6', 'work-7', 'work-8'],
-    //     weight: 91.5,
-    //     pricePerUnit: 1900,
-    //     weightUnit: .pound,
-    //     workerSellMoney: 100000,
-    //     sellMoney: 173850,
-    //     buyer: 'ဦးကျော်',
-    //     note: '',
-    //     date: DateTime(2026, 9, 28),
-    //   ),
-    // ];
+    init();
+  }
+
+  Future<void> init() async {
+    await sellCon.fetchList(widget.site.id);
   }
 
   double get totalMoney {
@@ -105,77 +70,87 @@ class _RubberSellHomePageState extends State<RubberSellHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('ရော်ဘာအရောင်းစာရင်းများ')),
+      appBar: AppBar(
+        title: const Text('ရော်ဘာအရောင်းစာရင်းများ'),
+        actions: [
+          if (TPlatform.isDesktop)
+            IconButton(onPressed: init, icon: Icon(Icons.refresh_outlined)),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showNewRubberSellSheet,
         icon: const Icon(Icons.add),
         label: const Text('အရောင်းထည့်'),
       ),
-      body: CustomScrollView(
-        slivers: [
-          StreamBuilder(
-            stream: sellCon.events.whereType<RubberSellRecordDataChanged>(),
-            builder: (context, asyncSnapshot) {
-              return SliverPadding(
-                padding: const EdgeInsets.all(16),
-                sliver: SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      _SummaryCard(
-                        totalMoney: totalMoney,
-                        totalWeight: totalWeight,
-                        count: sellCon.list.length,
-                        unit: .pound,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            sliver: SliverToBoxAdapter(
-              child: Text(
-                'အရောင်းမှတ်တမ်း',
-                style: Theme.of(context).textTheme.titleLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: StreamBuilder(
+      body: RefreshIndicator.adaptive(
+        onRefresh: init,
+        child: CustomScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          slivers: [
+            StreamBuilder(
               stream: sellCon.events.whereType<RubberSellRecordDataChanged>(),
               builder: (context, asyncSnapshot) {
-                if (sellCon.list.isEmpty) {
-                  return SliverToBoxAdapter(
-                    child: Center(child: Text('စာရင်း မရှိပါ....')),
-                  );
-                }
-                return SliverList.builder(
-                  itemCount: sellCon.list.length,
-                  itemBuilder: (context, index) {
-                    final item = sellCon.list[index];
-                    return GestureDetector(
-                      onTap: () => showDetail(item),
-                      onLongPress: () => showItemMenu(item),
-                      onSecondaryTap: () => showItemMenu(item),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _SellRecordCard(record: item),
-                      ),
-                    );
-                  },
+                return SliverPadding(
+                  padding: const EdgeInsets.all(16),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        _SummaryCard(
+                          totalMoney: totalMoney,
+                          totalWeight: totalWeight,
+                          count: sellCon.list.length,
+                          unit: .pound,
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               },
             ),
-          ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 100)),
-        ],
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              sliver: SliverToBoxAdapter(
+                child: Text(
+                  'အရောင်းမှတ်တမ်း',
+                  style: Theme.of(context).textTheme.titleLarge
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              sliver: StreamBuilder(
+                stream: sellCon.events.whereType<RubberSellRecordDataChanged>(),
+                builder: (context, asyncSnapshot) {
+                  if (sellCon.list.isEmpty) {
+                    return SliverToBoxAdapter(
+                      child: Center(child: Text('စာရင်း မရှိပါ....')),
+                    );
+                  }
+                  return SliverList.builder(
+                    itemCount: sellCon.list.length,
+                    itemBuilder: (context, index) {
+                      final item = sellCon.list[index];
+                      return GestureDetector(
+                        onTap: () => showDetail(item),
+                        onLongPress: () => showItemMenu(item),
+                        onSecondaryTap: () => showItemMenu(item),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _SellRecordCard(record: item),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
+          ],
+        ),
       ),
     );
   }

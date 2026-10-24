@@ -204,204 +204,207 @@ class NewRubberSellSheetState extends State<NewRubberSellSheet> {
   ColorScheme get col => Theme.of(context).colorScheme;
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      expand: false,
-      initialChildSize: 0.85,
-      minChildSize: 0.5,
-      maxChildSize: 0.95,
-      builder: (context, scrollController) {
-        return Form(
-          key: _formKey,
-          child: ListView(
-            controller: scrollController,
-            padding: const EdgeInsets.fromLTRB(20, 4, 20, 30),
-            children: [
-              Text(
-                'ရော်ဘာအရောင်းအသစ်',
-                style: Theme.of(context).textTheme.headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Date
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.calendar_today_outlined),
-                title: const Text('ရောင်းတဲ့နေ့'),
-                subtitle: Text('${_date.day}/${_date.month}/${_date.year}'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: _pickDate,
-              ),
-
-              const SizedBox(height: 8),
-
-              // Buyer
-              TextFormField(
-                controller: _buyerController,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(
-                  labelText: 'ဝယ်သူ',
-                  hintText: 'ဥပမာ - ဦးကျော်',
-                  prefixIcon: Icon(Icons.person_outline),
-                  border: OutlineInputBorder(),
+    return Padding(
+      padding: .only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.85,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) {
+          return Form(
+            key: _formKey,
+            child: ListView(
+              controller: scrollController,
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 30),
+              children: [
+                Text(
+                  'ရော်ဘာအရောင်းအသစ်',
+                  style: Theme.of(context).textTheme.headlineSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'ဝယ်သူအမည်ထည့်ပါ';
-                  }
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 16),
-
-              // Weight
-              TextFormField(
-                controller: _weightController,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
+      
+                const SizedBox(height: 24),
+      
+                // Date
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.calendar_today_outlined),
+                  title: const Text('ရောင်းတဲ့နေ့'),
+                  subtitle: Text('${_date.day}/${_date.month}/${_date.year}'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: _pickDate,
                 ),
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(
-                  labelText: 'အလေးချိန်',
-                  hintText: '0.0',
-                  suffixText: 'kg',
-                  prefixIcon: Icon(Icons.scale_outlined),
-                  border: OutlineInputBorder(),
+      
+                const SizedBox(height: 8),
+      
+                // Buyer
+                TextFormField(
+                  controller: _buyerController,
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(
+                    labelText: 'ဝယ်သူ',
+                    hintText: 'ဥပမာ - ဦးကျော်',
+                    prefixIcon: Icon(Icons.person_outline),
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'ဝယ်သူအမည်ထည့်ပါ';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  final number = double.tryParse(value ?? '');
-
-                  if (number == null || number <= 0) {
-                    return 'အလေးချိန်မှန်ကန်စွာထည့်ပါ';
-                  }
-
-                  return null;
-                },
-                onChanged: (value) {
-                  _totalController.text = total.toString();
-                },
-              ),
-
-              const SizedBox(height: 16),
-              // အလေးချိန်
-              DropdownButtonFormField<WeightUnit>(
-                initialValue: _weightUnit,
-                decoration: const InputDecoration(
-                  labelText: 'အလေးချိန်ယူနစ်',
-                  prefixIcon: Icon(Icons.scale_outlined),
-                  border: OutlineInputBorder(),
+      
+                const SizedBox(height: 16),
+      
+                // Weight
+                TextFormField(
+                  controller: _weightController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(
+                    labelText: 'အလေးချိန်',
+                    hintText: '0.0',
+                    suffixText: 'kg',
+                    prefixIcon: Icon(Icons.scale_outlined),
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    final number = double.tryParse(value ?? '');
+      
+                    if (number == null || number <= 0) {
+                      return 'အလေးချိန်မှန်ကန်စွာထည့်ပါ';
+                    }
+      
+                    return null;
+                  },
+                  onChanged: (value) {
+                    _totalController.text = total.toString();
+                  },
                 ),
-                items: WeightUnit.values.map((unit) {
-                  return DropdownMenuItem(value: unit, child: Text(unit.label));
-                }).toList(),
-                onChanged: (value) {
-                  if (value == null) return;
-
-                  setState(() {
-                    _weightUnit = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-              // Price
-              TextFormField(
-                controller: _priceController,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
+      
+                const SizedBox(height: 16),
+                // အလေးချိန်
+                DropdownButtonFormField<WeightUnit>(
+                  initialValue: _weightUnit,
+                  decoration: const InputDecoration(
+                    labelText: 'အလေးချိန်ယူနစ်',
+                    prefixIcon: Icon(Icons.scale_outlined),
+                    border: OutlineInputBorder(),
+                  ),
+                  items: WeightUnit.values.map((unit) {
+                    return DropdownMenuItem(value: unit, child: Text(unit.label));
+                  }).toList(),
+                  onChanged: (value) {
+                    if (value == null) return;
+      
+                    setState(() {
+                      _weightUnit = value;
+                    });
+                  },
                 ),
-                textInputAction: TextInputAction.next,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: InputDecoration(
-                  labelText: '1 ${_weightUnit.label} ဈေး',
-                  hintText: '0',
-                  suffixText: 'ကျပ်',
-                  prefixIcon: Icon(Icons.payments_outlined),
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 16),
+                // Price
+                TextFormField(
+                  controller: _priceController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  textInputAction: TextInputAction.next,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  decoration: InputDecoration(
+                    labelText: '1 ${_weightUnit.label} ဈေး',
+                    hintText: '0',
+                    suffixText: 'ကျပ်',
+                    prefixIcon: Icon(Icons.payments_outlined),
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    final number = double.tryParse(value ?? '');
+      
+                    if (number == null || number <= 0) {
+                      return 'ဈေးနှုန်းမှန်ကန်စွာထည့်ပါ';
+                    }
+      
+                    return null;
+                  },
+                  onChanged: (value) {
+                    _totalController.text = total.toString();
+                  },
                 ),
-                validator: (value) {
-                  final number = double.tryParse(value ?? '');
-
-                  if (number == null || number <= 0) {
-                    return 'ဈေးနှုန်းမှန်ကန်စွာထည့်ပါ';
-                  }
-
-                  return null;
-                },
-                onChanged: (value) {
-                  _totalController.text = total.toString();
-                },
-              ),
-
-              const SizedBox(height: 20),
-
-              // Total စျေးနှန်း
-              TextFormField(
-                controller: _totalController,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
+      
+                const SizedBox(height: 20),
+      
+                // Total စျေးနှန်း
+                TextFormField(
+                  controller: _totalController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    labelText: 'စုစုပေါင်းရောင်းရငွေ',
+                    hintText: '0',
+                    suffixText: 'ကျပ်',
+                    prefixIcon: Icon(Icons.payments_outlined),
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    final number = double.tryParse(value ?? '');
+      
+                    if (number == null || number <= 0) {
+                      return 'ဈေးနှုန်းမှန်ကန်စွာထည့်ပါ';
+                    }
+      
+                    return null;
+                  },
                 ),
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  labelText: 'စုစုပေါင်းရောင်းရငွေ',
-                  hintText: '0',
-                  suffixText: 'ကျပ်',
-                  prefixIcon: Icon(Icons.payments_outlined),
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  final number = double.tryParse(value ?? '');
-
-                  if (number == null || number <= 0) {
-                    return 'ဈေးနှုန်းမှန်ကန်စွာထည့်ပါ';
-                  }
-
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              _workerSellMoney(),
-              const SizedBox(height: 20),
-
-              // Daily works
-              _dailyWorkChooser(),
-
-              const SizedBox(height: 8),
-
-              // Note
-              TextFormField(
-                controller: _noteController,
-                maxLines: 3,
-                textInputAction: TextInputAction.done,
-                decoration: const InputDecoration(
-                  labelText: 'မှတ်ချက်',
-                  hintText: 'မှတ်ထားလိုတာရှိရင် ရေးပါ',
-                  prefixIcon: Icon(Icons.notes_outlined),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Save
-              SizedBox(
-                height: 52,
-                child: FilledButton.icon(
-                  onPressed: _save,
-                  icon: const Icon(Icons.check),
-                  label: const Text(
-                    'အရောင်းစာရင်းသိမ်းမည်',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                const SizedBox(height: 20),
+                _workerSellMoney(),
+                const SizedBox(height: 20),
+      
+                // Daily works
+                _dailyWorkChooser(),
+      
+                const SizedBox(height: 8),
+      
+                // Note
+                TextFormField(
+                  controller: _noteController,
+                  maxLines: 3,
+                  textInputAction: TextInputAction.done,
+                  decoration: const InputDecoration(
+                    labelText: 'မှတ်ချက်',
+                    hintText: 'မှတ်ထားလိုတာရှိရင် ရေးပါ',
+                    prefixIcon: Icon(Icons.notes_outlined),
+                    border: OutlineInputBorder(),
                   ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
+      
+                const SizedBox(height: 24),
+      
+                // Save
+                SizedBox(
+                  height: 52,
+                  child: FilledButton.icon(
+                    onPressed: _save,
+                    icon: const Icon(Icons.check),
+                    label: const Text(
+                      'အရောင်းစာရင်းသိမ်းမည်',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -449,6 +452,7 @@ class NewRubberSellSheetState extends State<NewRubberSellSheet> {
     return TextFormField(
       controller: _workerSellMoneyCon,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
         labelText: 'အလုပ်သမား ရငွေ',
