@@ -10,9 +10,11 @@ class AddRubberDailyWorkSheet extends StatefulWidget {
     super.key,
     required this.sites,
     this.onSave,
-    this.work,
+    this.editWork,
+    this.lastWork,
   });
-  final RubberDailyWork? work;
+  final RubberDailyWork? editWork;
+  final RubberDailyWork? lastWork;
   final List<MyWorkSite> sites;
   final void Function(RubberDailyWork work)? onSave;
 
@@ -20,7 +22,8 @@ class AddRubberDailyWorkSheet extends StatefulWidget {
     BuildContext context, {
     required List<MyWorkSite> sites,
     void Function(RubberDailyWork work)? onSave,
-    RubberDailyWork? work,
+    RubberDailyWork? editWork,
+    RubberDailyWork? lastWork,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -31,7 +34,8 @@ class AddRubberDailyWorkSheet extends StatefulWidget {
         return AddRubberDailyWorkSheet(
           sites: sites,
           onSave: onSave,
-          work: work,
+          editWork: editWork,
+          lastWork: lastWork,
         );
       },
     );
@@ -56,12 +60,26 @@ class _AddRubberDailyWorkSheetState extends State<AddRubberDailyWorkSheet> {
 
   @override
   void initState() {
-    final work = widget.work;
+    super.initState();
+    _init();
+  }
+
+  @override
+  void dispose() {
+    _sliceController.dispose();
+    super.dispose();
+  }
+
+  void _init() async {
+    final work = widget.editWork;
     if (work != null) {
       this.work = work;
 
       paid = work.paid;
-      _siteId = work.siteId;
+      _siteId = widget.sites.firstWhere(
+        (e) => e.id == work.siteId,
+        orElse: () => widget.sites.first,
+      );
 
       _startWorkTime = work.startWorkTime;
       _endWorkTime = work.endWorkTime;
@@ -72,13 +90,12 @@ class _AddRubberDailyWorkSheetState extends State<AddRubberDailyWorkSheet> {
         _siteId = widget.sites.first;
       }
     }
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _sliceController.dispose();
-    super.dispose();
+    final lastWork = widget.lastWork;
+    if (lastWork != null) {
+      _startWorkTime = lastWork.startWorkTime;
+      _endWorkTime = lastWork.endWorkTime;
+    }
+    setState(() {});
   }
 
   Future<void> _selectTime({required bool start}) async {
@@ -145,7 +162,7 @@ class _AddRubberDailyWorkSheetState extends State<AddRubberDailyWorkSheet> {
     if (work != null) {
       widget.onSave?.call(
         work!.copyWith(
-          siteId: _siteId!,
+          siteId: _siteId?.id,
           startWorkTime: _currentDate.copyWith(
             hour: _startWorkTime.hour,
             minute: _startWorkTime.minute,
@@ -163,7 +180,7 @@ class _AddRubberDailyWorkSheetState extends State<AddRubberDailyWorkSheet> {
     else {
       final work = RubberDailyWork(
         id: UuidV4().generate(),
-        siteId: _siteId!,
+        siteId: _siteId!.id,
 
         startWorkTime: _currentDate.copyWith(
           hour: _startWorkTime.hour,
@@ -202,14 +219,14 @@ class _AddRubberDailyWorkSheetState extends State<AddRubberDailyWorkSheet> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Add Daily Work',
+                '${widget.editWork == null ? 'Add' : 'Edit'} Daily Work',
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
 
               const SizedBox(height: 24),
-              if (widget.work == null)
+              if (widget.editWork == null)
                 DropdownButtonFormField<MyWorkSite>(
                   initialValue: _siteId,
                   decoration: const InputDecoration(

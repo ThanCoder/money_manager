@@ -16,6 +16,7 @@ class MyWorkSiteDeleted extends IControllerEvent {
 class MyWorkSiteController extends IController {
   final db = DB.store;
   List<MyWorkSite> list = [];
+  final map = <String,MyWorkSite>{};
 
   DuBox<MyWorkSite> get _box => db.getBox<MyWorkSite>();
 
@@ -36,6 +37,7 @@ class MyWorkSiteController extends IController {
   }
 
   Future<void> fetchList() async {
+    map.clear();
     addEvent(MyWorkSiteDataChanged());
     list = await _box.getAll();
     list.sort((a, b) {
@@ -43,6 +45,9 @@ class MyWorkSiteController extends IController {
       if (b.type == .saving && a.type != .saving) return 1;
       return 0;
     });
+    for (var val in list) {
+      map[val.id] = val;
+    }
     addEvent(MyWorkSiteDataChanged());
   }
 

@@ -81,22 +81,23 @@ class _RubberHomePageState extends State<RubberHomePage> {
       title: 'အလုပ်လုပ်ခဲ့တဲ့နေ့',
       value: '${con.list.length}',
     ),
-    StreamBuilder(
-      stream: sellRecCon.events.whereType<RubberSellRecordDataChanged>(),
-      builder: (context, asyncSnapshot) {
-        return InkWell(
-          borderRadius: .circular(18),
-          onTap: goRubberSellPage,
-          child: _SummaryCard(
-            icon: Icons.payments_outlined,
-            title: 'အရင်အပတ်က ဝင်ငွေ',
-            value: sellRecCon.list.isEmpty
-                ? '0'
-                : '${sellRecCon.list.last.workerSellMoney}',
-            suffix: ' MMK >',
-          ),
-        );
-      },
+    if (sellRecCon.list.isNotEmpty)
+      _SummaryCard(
+        icon: Icons.payments_outlined,
+        title: 'အလုပ်လုပ်ခဲ့တဲ့ အချိန်',
+        value: con.list.totalWorkTimeLable,
+      ),
+    InkWell(
+      borderRadius: .circular(18),
+      onTap: goRubberSellPage,
+      child: _SummaryCard(
+        icon: Icons.payments_outlined,
+        title: 'အရင်အပတ်က ဝင်ငွေ',
+        value: sellRecCon.list.isEmpty
+            ? '0'
+            : '${sellRecCon.list.last.workerSellMoney}',
+        suffix: ' MMK >',
+      ),
     ),
   ];
 
@@ -110,6 +111,7 @@ class _RubberHomePageState extends State<RubberHomePage> {
     AddRubberDailyWorkSheet.show(
       context,
       sites: [site],
+      lastWork: con.list.firstOrNull,
       onSave: (work) {
         con.add(work);
       },
@@ -269,7 +271,7 @@ class _RubberHomePageState extends State<RubberHomePage> {
                     const SizedBox(height: 4),
 
                     Text(
-                      '06:30 AM  →  11:30 AM',
+                      '${rubber.startWorkTime.formatTime()}  →  ${rubber.endWorkTime.formatTime()}',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                       ),

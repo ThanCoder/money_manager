@@ -26,7 +26,6 @@ class RubberSellRecordController extends IController {
     _workSiteCon.events.whereType<MyWorkSiteDeleted>().listen((event) async {
       await box.delete((value) => value.workSiteId == event.siteId);
       fetchList(event.siteId);
-      print('[RubberSellRecordController]: deleted');
     });
     fetchList(siteId);
   }

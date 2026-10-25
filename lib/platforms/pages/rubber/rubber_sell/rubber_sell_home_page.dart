@@ -6,7 +6,7 @@ import 'package:money_manager/core/controller/rubber_site_controller.dart';
 import 'package:money_manager/core/models/rubber/rubber_sell_record.dart';
 import 'package:money_manager/core/models/worker/my_work_site.dart';
 import 'package:money_manager/core/types/weight_unit.dart';
-import 'package:money_manager/platforms/pages/rubber/rubber_home/new_rubber_sell_sheet.dart';
+import 'package:money_manager/platforms/pages/rubber/rubber_sell/new_rubber_sell_sheet.dart';
 import 'package:money_manager/platforms/pages/rubber/rubber_sell/rubber_sell_detail_sheet.dart';
 import 'package:money_manager/platforms/pages/rubber/rubber_sell/rubber_sell_item_menu_sheet.dart';
 

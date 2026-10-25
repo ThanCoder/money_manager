@@ -34,16 +34,16 @@ class RubberSiteController extends IController {
           fetchList(siteId);
         });
     _workSiteCon.events.whereType<MyWorkSiteDeleted>().listen((event) async {
-      await box.delete((value) => value.siteId.id == event.siteId);
+      await box.delete((value) => value.siteId == event.siteId);
       fetchList(event.siteId);
-      print('[RubberSiteController]: deleted');
+      // print('[RubberSiteController]: deleted');
     });
     fetchList(siteId);
   }
 
   Future<void> fetchList(String siteId) async {
     addEvent(RubberSiteDataChanged());
-    list = await box.find((val) => val.siteId.id == siteId);
+    list = await box.find((val) => val.siteId == siteId);
     list.sortDate();
     for (var d in list) {
       map[d.id] = d;

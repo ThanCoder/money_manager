@@ -25,7 +25,7 @@ class SavingController extends IController {
         });
     _workSiteCon.events.whereType<MyWorkSiteDeleted>().listen((event) async {
       await box.delete((value) => value.siteId == event.siteId);
-      print('[SavingController]: deleted');
+      // print('[SavingController]: deleted');
       fetchList(event.siteId);
     });
     fetchList(siteId);

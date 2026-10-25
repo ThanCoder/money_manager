@@ -1,6 +1,5 @@
 import 'package:dual_store/dual_store.dart';
 import 'package:money_manager/core/datetime_x.dart';
-import 'package:money_manager/core/models/worker/my_work_site.dart';
 
 class RubberDailyWorkAdapter extends IDuBinaryMetaAdapter<RubberDailyWork> {
   @override
@@ -27,7 +26,7 @@ class RubberDailyWork extends IDuModel {
     required this.id,
   });
   final String id;
-  final MyWorkSite siteId;
+  final String siteId;
   final DateTime startWorkTime;
 
   final DateTime endWorkTime;
@@ -45,7 +44,7 @@ class RubberDailyWork extends IDuModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'siteId': siteId.toJson(),
+      'siteId': siteId,
       'startWorkTime': startWorkTime.millisecondsSinceEpoch,
       'endWorkTime': endWorkTime.millisecondsSinceEpoch,
       'rubberSliceCount': rubberSliceCount,
@@ -54,9 +53,17 @@ class RubberDailyWork extends IDuModel {
   }
 
   factory RubberDailyWork.fromJson(Map<String, dynamic> json) {
+    String siteId = '';
+    if (json['siteId'] case {'id': var id}) {
+      siteId = id;
+    } else if (json['siteId'] is String) {
+      siteId = json['siteId'] as String;
+    }
+    // final site = MyWorkSite.fromJson();
+
     return RubberDailyWork(
       id: json['id'],
-      siteId: MyWorkSite.fromJson(json['siteId']),
+      siteId: siteId,
       startWorkTime: DateTime.fromMillisecondsSinceEpoch(json['startWorkTime']),
       endWorkTime: DateTime.fromMillisecondsSinceEpoch(json['endWorkTime']),
       rubberSliceCount: json['rubberSliceCount'],
@@ -71,7 +78,7 @@ class RubberDailyWork extends IDuModel {
 
   RubberDailyWork copyWith({
     String? id,
-    MyWorkSite? siteId,
+    String? siteId,
     DateTime? startWorkTime,
     DateTime? endWorkTime,
     int? rubberSliceCount,
@@ -88,7 +95,33 @@ class RubberDailyWork extends IDuModel {
   }
 }
 
-extension RubberDailyWorkX on List<RubberDailyWork> {
+extension RubberDailyWorkListX on List<RubberDailyWork> {
+  String get totalWorkTimeLable {
+    final duration = Duration(minutes: totalMinutes);
+
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+
+    if (hours > 0 && minutes > 0) {
+      return '$hours နာရီ $minutes မိနစ်';
+    }
+
+    if (hours > 0) {
+      return '$hours နာရီ';
+    }
+
+    return '$minutes မိနစ်';
+  }
+
+  int get totalHours {
+    final totalMins = totalMinutes;
+    return totalMins.remainder(60);
+  }
+
+  int get totalMinutes {
+    return fold(0, (prev, e) => prev += e.totalWorkTimeMinutes);
+  }
+
   void sortDate({bool newest = true}) {
     sort((a, b) {
       if (newest) {
@@ -97,5 +130,16 @@ extension RubberDailyWorkX on List<RubberDailyWork> {
         return a.endWorkTime.compareTo(b.endWorkTime);
       }
     });
+  }
+}
+
+extension RubberDailyWorkX on RubberDailyWork {
+  int get totalWorkTimeMinutes {
+    final duration = endWorkTime.difference(startWorkTime);
+
+    // final hours = duration.inHours;
+    // final minutes = duration.inMinutes.remainder(60);
+
+    return duration.inMinutes;
   }
 }

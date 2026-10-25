@@ -49,7 +49,7 @@ class _RubberItemMenuState extends State<RubberItemMenu> {
     await AddRubberDailyWorkSheet.show(
       context,
       sites: [widget.site],
-      work: widget.work,
+      editWork: widget.work,
       onSave: (work) {
         con.update(widget.work.generatedId, work);
       },

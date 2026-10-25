@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:money_manager/core/controller/i_controller.dart';
+import 'package:money_manager/core/controller/my_work_site_controller.dart';
 import 'package:money_manager/core/datetime_x.dart';
 import 'package:money_manager/core/models/rubber/rubber_daily_work.dart';
+import 'package:money_manager/core/models/worker/my_work_site.dart';
 
-class RubberDailyWorkDetailSheet extends StatelessWidget {
+class RubberDailyWorkDetailSheet extends StatefulWidget {
   const RubberDailyWorkDetailSheet({super.key, required this.work});
 
   final RubberDailyWork work;
@@ -21,24 +24,37 @@ class RubberDailyWorkDetailSheet extends StatelessWidget {
     );
   }
 
+  @override
+  State<RubberDailyWorkDetailSheet> createState() =>
+      _RubberDailyWorkDetailSheetState();
+}
+
+class _RubberDailyWorkDetailSheetState
+    extends State<RubberDailyWorkDetailSheet> {
+  final con = ControllerManager.read<MyWorkSiteController>();
+
+  MyWorkSite? get workSite => con.map[widget.work.siteId];
+
   String get _date {
-    if (work.endWorkTime.isToday) {
+    if (widget.work.endWorkTime.isToday) {
       return 'Today';
     }
 
-    return DateFormat('dd MMMM yyyy').format(work.endWorkTime);
+    return DateFormat('dd MMMM yyyy').format(widget.work.endWorkTime);
   }
 
   String get _startTime {
-    return DateFormat('hh:mm a').format(work.startWorkTime);
+    return DateFormat('hh:mm a').format(widget.work.startWorkTime);
   }
 
   String get _endTime {
-    return DateFormat('hh:mm a').format(work.endWorkTime);
+    return DateFormat('hh:mm a').format(widget.work.endWorkTime);
   }
 
   String get _duration {
-    final duration = work.endWorkTime.difference(work.startWorkTime);
+    final duration = widget.work.endWorkTime.difference(
+      widget.work.startWorkTime,
+    );
 
     final hours = duration.inHours;
     final minutes = duration.inMinutes.remainder(60);
@@ -105,7 +121,7 @@ class RubberDailyWorkDetailSheet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        work.siteId.title,
+                        workSite?.title ?? 'Null!',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.titleLarge?.copyWith(
@@ -151,7 +167,7 @@ class RubberDailyWorkDetailSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${work.rubberSliceCount}',
+                    '${widget.work.rubberSliceCount}',
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.w800,
                       color: colorScheme.onPrimaryContainer,
@@ -159,7 +175,7 @@ class RubberDailyWorkDetailSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'ရော်ဘာအစိတ်အပိုင်း',
+                    'ရော်ဘာအပြားများ',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onPrimaryContainer,
                     ),
@@ -214,7 +230,7 @@ class RubberDailyWorkDetailSheet extends StatelessWidget {
                 _InfoRow(
                   icon: Icons.agriculture_outlined,
                   title: 'အလုပ်နေရာ',
-                  value: work.siteId.title,
+                  value: workSite?.title ?? 'Null!',
                 ),
 
                 const Divider(height: 1),
@@ -222,7 +238,7 @@ class RubberDailyWorkDetailSheet extends StatelessWidget {
                 _InfoRow(
                   icon: Icons.content_cut_outlined,
                   title: 'ရော်ဘာအရေအတွက်',
-                  value: '${work.rubberSliceCount} ခု',
+                  value: '${widget.work.rubberSliceCount} ခု',
                 ),
 
                 const Divider(height: 1),
@@ -242,12 +258,12 @@ class RubberDailyWorkDetailSheet extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            _PaymentStatus(paid: work.paid),
+            _PaymentStatus(paid: widget.work.paid),
 
             const SizedBox(height: 20),
 
             // Work site description
-            if (work.siteId.desc.trim().isNotEmpty) ...[
+            if ((workSite?.desc ?? '').trim().isNotEmpty) ...[
               _SectionTitle(
                 icon: Icons.notes_outlined,
                 title: 'အလုပ်နေရာအကြောင်း',
@@ -263,7 +279,7 @@ class RubberDailyWorkDetailSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
-                  work.siteId.desc,
+                  workSite?.desc ?? '',
                   style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
                 ),
               ),
