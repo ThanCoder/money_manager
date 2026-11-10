@@ -313,8 +313,7 @@ class _SavingHomePageState extends State<SavingHomePage> {
 
   Widget _transListItem(MoneyTransaction trans) {
     final isIncome = trans.isIncome;
-    // ရက်စွဲကို လှပစွာ ဖော်ပြရန် (ဥပမာ - Oct 12, 2026)
-    final formattedDate = DateFormat('MMM d, yyyy').format(trans.date);
+    
 
     return GestureDetector(
       onLongPress: () => showItemMenu(trans),
@@ -352,9 +351,7 @@ class _SavingHomePageState extends State<SavingHomePage> {
               ),
               const SizedBox(height: 2),
               Text(
-                trans.date.isToday
-                    ? 'ဒီနေ့'
-                    : formattedDate, // ရက်စွဲ Label ထည့်ထားခြင်း
+                trans.dateLabel, // ရက်စွဲ Label ထည့်ထားခြင်း
                 style: TextStyle(color: Colors.grey[400], fontSize: 11),
               ),
             ],

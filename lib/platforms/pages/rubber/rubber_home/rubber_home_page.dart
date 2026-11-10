@@ -276,7 +276,7 @@ class _RubberHomePageState extends State<RubberHomePage> {
                         color: colorScheme.onSurfaceVariant,
                       ),
                     ),
-                    Text(rubber.date),
+                    Text(rubber.dateLabel),
                   ],
                 ),
               ),

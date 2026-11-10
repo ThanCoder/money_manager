@@ -66,7 +66,7 @@ class MyWorkSiteController extends IController {
     final index = list.indexWhere((e) => e.id == site.id);
     if (index == -1) return;
     list[index] = site;
-    await _box.updateByid(generatedId, value: site);
+    await _box.updateById(generatedId, value: site);
     addEvent(MyWorkSiteDataChanged());
   }
 

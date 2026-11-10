@@ -1,4 +1,6 @@
+import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:dual_store/dual_store.dart';
+import 'package:intl/intl.dart';
 import 'package:money_manager/core/datetime_x.dart';
 
 class RubberDailyWorkAdapter extends IDuBinaryMetaAdapter<RubberDailyWork> {
@@ -142,4 +144,11 @@ extension RubberDailyWorkX on RubberDailyWork {
 
     return duration.inMinutes;
   }
+
+  /// ရက်စွဲကို လှပစွာ ဖော်ပြရန် (ဥပမာ - Oct 12, 2026)
+  String get dateLabel => switch (startWorkTime) {
+    final d when d.today => 'ဒီနေ့',
+    final d when d.isYesterday => 'မနေ့က',
+    _ => DateFormat('MMM d, yyyy').format(startWorkTime),
+  };
 }

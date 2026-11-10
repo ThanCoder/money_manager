@@ -180,6 +180,9 @@ class _NewWorkSiteSheetState extends State<NewWorkSiteSheet> {
                 ],
                 onChanged: (value) {
                   if (value == null) return;
+                  if (value == .none || value == .saving) {
+                    _role = .none;
+                  }
 
                   setState(() {
                     _type = value;
@@ -190,25 +193,26 @@ class _NewWorkSiteSheetState extends State<NewWorkSiteSheet> {
               const SizedBox(height: 16),
 
               // Role
-              DropdownButtonFormField<WorkRole>(
-                initialValue: _role,
-                decoration: const InputDecoration(
-                  labelText: 'Your Role',
-                  prefixIcon: Icon(Icons.person_outline),
-                  border: OutlineInputBorder(),
-                ),
-                items: [
-                  for (final role in WorkRole.values)
-                    DropdownMenuItem(value: role, child: Text(role.roleName)),
-                ],
-                onChanged: (value) {
-                  if (value == null) return;
+              if (_type != .saving && _type != .none)
+                DropdownButtonFormField<WorkRole>(
+                  initialValue: _role,
+                  decoration: const InputDecoration(
+                    labelText: 'Your Role',
+                    prefixIcon: Icon(Icons.person_outline),
+                    border: OutlineInputBorder(),
+                  ),
+                  items: [
+                    for (final role in WorkRole.values)
+                      DropdownMenuItem(value: role, child: Text(role.roleName)),
+                  ],
+                  onChanged: (value) {
+                    if (value == null) return;
 
-                  setState(() {
-                    _role = value;
-                  });
-                },
-              ),
+                    setState(() {
+                      _role = value;
+                    });
+                  },
+                ),
 
               const SizedBox(height: 16),
 

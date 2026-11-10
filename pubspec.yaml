@@ -10,17 +10,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.8
-  cfb_store: ^0.7.0
-  than_pkg_linux: ^0.2.0
-  than_pkg_android: ^0.6.1
+  cupertino_icons: ^2.0.0
+  cfb_store: ^0.8.0
+  than_pkg_linux: ^0.3.0
+  than_pkg_android: ^0.7.0
   package_info_plus: ^10.2.1
-  dart_core_extensions: ^0.7.0
+  dart_core_extensions: ^0.8.0
 
   t_widgets:
     git: https://github.com/ThanCoder/t_widgets.git
-  # t_server:
-  #   git: https://github.com/ThanCoder/t_server.git
   dual_store:
     git: https://github.com/ThanCoder/dual_store.git
   t_client:

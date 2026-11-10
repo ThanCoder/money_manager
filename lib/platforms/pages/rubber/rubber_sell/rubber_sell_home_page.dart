@@ -320,10 +320,6 @@ class _SellRecordCard extends StatelessWidget {
     return '${value.toStringAsFixed(0)} ကျပ်';
   }
 
-  String _date(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -349,7 +345,7 @@ class _SellRecordCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        _date(record.date),
+                        record.dateLabel,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],

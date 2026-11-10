@@ -73,7 +73,7 @@ class RubberSiteController extends IController {
     if (index != -1) {
       list[index] = work;
     }
-    await box.updateByid(generatedId, value: work);
+    await box.updateById(generatedId, value: work);
     addEvent(RubberSiteDataChanged());
   }
 }

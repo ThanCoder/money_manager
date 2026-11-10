@@ -1,5 +1,8 @@
+import 'package:dart_core_extensions/dart_core_extensions.dart';
 import 'package:dual_store/dual_store.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:money_manager/core/datetime_x.dart';
 
 part 'money_type.dart';
 
@@ -102,7 +105,7 @@ class MoneyTransaction extends IDuModel {
   }
 }
 
-extension MoneyTransactionX on List<MoneyTransaction> {
+extension MoneyTransactionListX on List<MoneyTransaction> {
   void sortDate({bool newest = true}) {
     sort((a, b) {
       if (newest) {
@@ -112,4 +115,13 @@ extension MoneyTransactionX on List<MoneyTransaction> {
       }
     });
   }
+}
+
+extension MoneyTransactionX on MoneyTransaction {
+  /// ရက်စွဲကို လှပစွာ ဖော်ပြရန် (ဥပမာ - Oct 12, 2026)
+  String get dateLabel => switch (date) {
+    final d when d.today => 'ဒီနေ့',
+    final d when d.isYesterday => 'မနေ့က',
+    _ => DateFormat('MMM d, yyyy').format(date),
+  };
 }
