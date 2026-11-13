@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:money_manager/core/utils/app_util.dart';
 
 class AppAboutDialogListTile extends StatelessWidget {
-  const new({super.key, required this.appDesc});
-  final String appDesc;
+  const new({super.key, required this.descText});
+  final String descText;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,8 @@ class AppAboutDialogListTile extends StatelessWidget {
 
           children: [
             const SizedBox(height: 16),
-            Text(appDesc),
+
+            Text(descText),
 
             const SizedBox(height: 16),
 

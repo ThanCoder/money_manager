@@ -1,7 +1,7 @@
 import 'package:dart_core_extensions/dart_core_extensions.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:money_manager/core/db.dart';
-import 'package:t_widgets/t_widgets.dart';
+import 'package:money_manager/ui/index.dart';
 
 class DBSettingListTile extends StatelessWidget {
   const new({super.key});

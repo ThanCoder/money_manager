@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:money_manager/platforms/mobile/mobile_home_page.dart';
 import 'package:money_manager/platforms/pages/more_page.dart';
 

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:money_manager/core/controller/i_controller.dart';
 import 'package:money_manager/core/controller/rubber_site_controller.dart';
@@ -6,9 +6,9 @@ import 'package:money_manager/core/models/rubber/rubber_daily_work.dart';
 import 'package:money_manager/core/models/rubber/rubber_sell_record.dart';
 import 'package:money_manager/core/models/worker/my_work_site.dart';
 import 'package:money_manager/core/types/weight_unit.dart';
-import 'package:money_manager/platforms/components/dialog/error_alert_dialog.dart';
+
 import 'package:money_manager/platforms/pages/rubber/rubber_sell/rubber_daily_work_chooser_list_page.dart';
-import 'package:t_widgets/t_widgets.dart';
+import 'package:money_manager/ui/index.dart';
 
 class NewRubberSellSheetResp {
   final List<RubberDailyWork> dailyWorks;
@@ -223,9 +223,9 @@ class NewRubberSellSheetState extends State<NewRubberSellSheet> {
                   style: Theme.of(context).textTheme.headlineSmall
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
-      
+
                 const SizedBox(height: 24),
-      
+
                 // Date
                 ListTile(
                   contentPadding: EdgeInsets.zero,
@@ -235,9 +235,9 @@ class NewRubberSellSheetState extends State<NewRubberSellSheet> {
                   trailing: const Icon(Icons.chevron_right),
                   onTap: _pickDate,
                 ),
-      
+
                 const SizedBox(height: 8),
-      
+
                 // Buyer
                 TextFormField(
                   controller: _buyerController,
@@ -255,9 +255,9 @@ class NewRubberSellSheetState extends State<NewRubberSellSheet> {
                     return null;
                   },
                 ),
-      
+
                 const SizedBox(height: 16),
-      
+
                 // Weight
                 TextFormField(
                   controller: _weightController,
@@ -275,18 +275,18 @@ class NewRubberSellSheetState extends State<NewRubberSellSheet> {
                   ),
                   validator: (value) {
                     final number = double.tryParse(value ?? '');
-      
+
                     if (number == null || number <= 0) {
                       return 'အလေးချိန်မှန်ကန်စွာထည့်ပါ';
                     }
-      
+
                     return null;
                   },
                   onChanged: (value) {
                     _totalController.text = total.toString();
                   },
                 ),
-      
+
                 const SizedBox(height: 16),
                 // အလေးချိန်
                 DropdownButtonFormField<WeightUnit>(
@@ -297,11 +297,14 @@ class NewRubberSellSheetState extends State<NewRubberSellSheet> {
                     border: OutlineInputBorder(),
                   ),
                   items: WeightUnit.values.map((unit) {
-                    return DropdownMenuItem(value: unit, child: Text(unit.label));
+                    return DropdownMenuItem(
+                      value: unit,
+                      child: Text(unit.label),
+                    );
                   }).toList(),
                   onChanged: (value) {
                     if (value == null) return;
-      
+
                     setState(() {
                       _weightUnit = value;
                     });
@@ -325,20 +328,20 @@ class NewRubberSellSheetState extends State<NewRubberSellSheet> {
                   ),
                   validator: (value) {
                     final number = double.tryParse(value ?? '');
-      
+
                     if (number == null || number <= 0) {
                       return 'ဈေးနှုန်းမှန်ကန်စွာထည့်ပါ';
                     }
-      
+
                     return null;
                   },
                   onChanged: (value) {
                     _totalController.text = total.toString();
                   },
                 ),
-      
+
                 const SizedBox(height: 20),
-      
+
                 // Total စျေးနှန်း
                 TextFormField(
                   controller: _totalController,
@@ -356,23 +359,23 @@ class NewRubberSellSheetState extends State<NewRubberSellSheet> {
                   ),
                   validator: (value) {
                     final number = double.tryParse(value ?? '');
-      
+
                     if (number == null || number <= 0) {
                       return 'ဈေးနှုန်းမှန်ကန်စွာထည့်ပါ';
                     }
-      
+
                     return null;
                   },
                 ),
                 const SizedBox(height: 20),
                 _workerSellMoney(),
                 const SizedBox(height: 20),
-      
+
                 // Daily works
                 _dailyWorkChooser(),
-      
+
                 const SizedBox(height: 8),
-      
+
                 // Note
                 TextFormField(
                   controller: _noteController,
@@ -385,9 +388,9 @@ class NewRubberSellSheetState extends State<NewRubberSellSheet> {
                     border: OutlineInputBorder(),
                   ),
                 ),
-      
+
                 const SizedBox(height: 24),
-      
+
                 // Save
                 SizedBox(
                   height: 52,
@@ -396,7 +399,10 @@ class NewRubberSellSheetState extends State<NewRubberSellSheet> {
                     icon: const Icon(Icons.check),
                     label: const Text(
                       'အရောင်းစာရင်းသိမ်းမည်',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),

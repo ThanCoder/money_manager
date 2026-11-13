@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:money_manager/core/controller/i_controller.dart';
 import 'package:money_manager/core/controller/rubber_site_controller.dart';
 import 'package:money_manager/core/models/rubber/rubber_daily_work.dart';
 import 'package:money_manager/core/models/worker/my_work_site.dart';
-import 'package:t_widgets/t_widgets.dart';
+import 'package:money_manager/ui/index.dart';
 
 class RubberDailyWorkChooserListPage extends StatefulWidget {
   const new({super.key, required this.site, this.oldValues});

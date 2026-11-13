@@ -1,5 +1,5 @@
 import 'package:dart_core_extensions/dart_core_extensions.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:money_manager/core/controller/i_controller.dart';
 import 'package:money_manager/core/controller/rubber_sell_record_controller.dart';
 import 'package:money_manager/core/controller/rubber_site_controller.dart';
@@ -9,7 +9,7 @@ import 'package:money_manager/platforms/pages/rubber/rubber_home/add_rubber_dail
 import 'package:money_manager/platforms/pages/rubber/rubber_home/rubber_daily_work_detail_sheet.dart';
 import 'package:money_manager/platforms/pages/rubber/rubber_home/rubber_item_menu.dart';
 import 'package:money_manager/platforms/pages/rubber/rubber_sell/rubber_sell_home_page.dart';
-import 'package:t_widgets/t_widgets.dart';
+import 'package:money_manager/ui/index.dart';
 
 class RubberHomePage extends StatefulWidget {
   const new({super.key, required this.site});

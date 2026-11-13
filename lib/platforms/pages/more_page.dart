@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:money_manager/platforms/pages/app_about_dialog.dart';
 import 'package:money_manager/platforms/pages/db_setting/db_setting_page.dart';
-import 'package:t_widgets/t_widgets.dart';
+import 'package:money_manager/ui/index.dart';
 
-import '../components/dialog/app_about_dialog.dart';
 import 'dev_pages/dev_route_tile.dart';
 import 'version_manager.dart';
 
@@ -13,10 +13,10 @@ class MorePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("More Apps")),
-      body: TScrollableColumn(
+      body: ScrollableColumn(
         padding: .symmetric(vertical: 10, horizontal: 15),
         children: [
-          TMaterialThemeProviderChooser(),
+          MaterialThemeProviderChooser(),
           VersionManager(
             githubUrl: 'https://github.com/ThanCoder/mony_manager',
           ),
@@ -26,7 +26,7 @@ class MorePage extends StatelessWidget {
           DBSettingListTile(),
 
           DevRouteTile(),
-          AppAboutDialogListTile(appDesc: 'ငွေကြေးစီမံရေး Application.'),
+          AppAboutDialogListTile(descText: 'ငွေကြေးစီမံရေး Application.'),
         ],
       ),
     );
