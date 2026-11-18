@@ -3,13 +3,10 @@ import 'package:material_ui/material_ui.dart';
 import 'package:money_manager/core/controller/i_controller.dart';
 import 'package:money_manager/core/controller/rubber_sell_record_controller.dart';
 import 'package:money_manager/core/controller/rubber_site_controller.dart';
-import 'package:money_manager/core/models/rubber/rubber_daily_work.dart';
 import 'package:money_manager/core/models/worker/my_work_site.dart';
 import 'package:money_manager/platforms/pages/rubber/rubber_home/add_rubber_daily_work_sheet.dart';
-import 'package:money_manager/platforms/pages/rubber/rubber_home/rubber_daily_work_detail_sheet.dart';
-import 'package:money_manager/platforms/pages/rubber/rubber_home/rubber_item_menu.dart';
-import 'package:money_manager/platforms/pages/rubber/rubber_sell/rubber_sell_home_page.dart';
-import 'package:money_manager/ui/index.dart';
+import 'package:money_manager/platforms/pages/rubber/rubber_home/daily_work_header.dart';
+import 'package:money_manager/platforms/pages/rubber/rubber_home/daily_work_list.dart';
 
 class RubberHomePage extends StatefulWidget {
   const new({super.key, required this.site});
@@ -38,79 +35,10 @@ class _RubberHomePageState extends State<RubberHomePage> {
     await sellRecCon.fetchList(widget.site.id);
   }
 
-  int? get currentDayRubberSlice {
-    for (var d in con.list) {
-      if (d.endWorkTime.month == currentDate.month &&
-          d.endWorkTime.day == currentDate.day) {
-        return d.rubberSliceCount;
-      }
-    }
-    return null;
-  }
-
-  int get unpaidRubberSlices {
-    return con.list.fold(0, (prev, ele) {
-      if (!ele.paid) {
-        return prev + ele.rubberSliceCount;
-      }
-      return prev;
-    });
-  }
-
-  List<Widget> get headerList => [
-    // _SummaryCard(
-    //   icon: Icons.people_outline,
-    //   title: 'အလုပ်သမားများ',
-    //   value: '12',
-    // ),
-    if (currentDayRubberSlice != null)
-      _SummaryCard(
-        icon: Icons.eco_outlined,
-        title: 'ဒီနေ့ အစီးပြား',
-        value: currentDayRubberSlice.toString(),
-        suffix: ' slices',
-      ),
-    _SummaryCard(
-      icon: Icons.eco_outlined,
-      title: 'မရောင်းရသေးတဲ့ အစီးပြား',
-      value: unpaidRubberSlices.toString(),
-      suffix: ' slices',
-    ),
-    _SummaryCard(
-      icon: Icons.calendar_month_outlined,
-      title: 'အလုပ်လုပ်ခဲ့တဲ့နေ့',
-      value: '${con.list.length}',
-    ),
-    if (sellRecCon.list.isNotEmpty)
-      _SummaryCard(
-        icon: Icons.payments_outlined,
-        title: 'အလုပ်လုပ်ခဲ့တဲ့ အချိန်',
-        value: con.list.totalWorkTimeLable,
-      ),
-    InkWell(
-      borderRadius: .circular(18),
-      onTap: goRubberSellPage,
-      child: _SummaryCard(
-        icon: Icons.payments_outlined,
-        title: 'အရင်အပတ်က ဝင်ငွေ',
-        value: sellRecCon.list.isEmpty
-            ? '0'
-            : '${sellRecCon.list.last.workerSellMoney}',
-        suffix: ' MMK >',
-      ),
-    ),
-  ];
-
-  void goRubberSellPage() {
-    context.pushMaterialPageRoute(
-      builder: (mainCtx) => RubberSellHomePage(site: site),
-    );
-  }
-
   void _showAddDailyWork(BuildContext context) {
     AddRubberDailyWorkSheet.show(
       context,
-      sites: [site],
+      sites: [widget.site],
       lastWork: con.list.firstOrNull,
       onSave: (work) {
         con.add(work);
@@ -119,19 +47,9 @@ class _RubberHomePageState extends State<RubberHomePage> {
   }
 
   void showMenu() {}
-  void showRubberDetail(RubberDailyWork work) {
-    RubberDailyWorkDetailSheet.show(context, work: work);
-  }
-
-  void viewAll() {}
-
-  void showRubberItemMenu(RubberDailyWork work) {
-    RubberItemMenu.show(context, work, site: widget.site);
-  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
       body: RefreshIndicator.adaptive(
         onRefresh: init,
@@ -139,13 +57,16 @@ class _RubberHomePageState extends State<RubberHomePage> {
           physics: AlwaysScrollableScrollPhysics(),
           slivers: [
             _appbar(),
-            SliverPadding(
-              padding: const EdgeInsets.all(16),
-              sliver: _header(theme),
-            ),
+
+            DailyWorkHeader(site: widget.site),
+
+            // SliverPadding(
+            //   padding: const EdgeInsets.all(16),
+            //   sliver: _header(theme),
+            // ),
 
             // Daily work list
-            _listWidget(),
+            DailyWorkList(site: widget.site),
             SliverToBoxAdapter(child: SizedBox(height: 90)),
           ],
         ),
@@ -172,202 +93,6 @@ class _RubberHomePageState extends State<RubberHomePage> {
           IconButton(onPressed: init, icon: const Icon(Icons.refresh_rounded)),
         IconButton(onPressed: showMenu, icon: const Icon(Icons.more_vert)),
       ],
-    );
-  }
-
-  SliverToBoxAdapter _header(ThemeData theme) {
-    return SliverToBoxAdapter(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Summary
-          StreamBuilder(
-            stream: con.events.whereType<RubberSiteDataChanged>(),
-            builder: (context, asyncSnapshot) {
-              return Wrap(spacing: 12, runSpacing: 12, children: headerList);
-            },
-          ),
-
-          const SizedBox(height: 12),
-
-          Row(
-            children: [
-              Text(
-                'Daily Work',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Spacer(),
-              TextButton(onPressed: viewAll, child: const Text('View All')),
-            ],
-          ),
-
-          const SizedBox(height: 8),
-        ],
-      ),
-    );
-  }
-
-  Widget _listWidget() {
-    return StreamBuilder(
-      stream: con.events.whereType<RubberSiteDataChanged>(),
-      builder: (context, asyncSnapshot) {
-        if (con.list.isEmpty) {
-          return SliverFillRemaining(
-            child: Center(child: Text('စာရင်းမရှိပါ')),
-          );
-        }
-        return SliverList.builder(
-          itemCount: con.list.length,
-          itemBuilder: (context, index) {
-            return _dailyWorkItem(con.list[index]);
-          },
-        );
-      },
-    );
-  }
-
-  Widget _dailyWorkItem(RubberDailyWork rubber) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final bgColor = rubber.paid
-        ? colorScheme.surfaceBright
-        : colorScheme.primaryContainer;
-
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: () => showRubberDetail(rubber),
-        onLongPress: () => showRubberItemMenu(rubber),
-        onSecondaryTap: () => showRubberItemMenu(rubber),
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: .circular(14),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(
-                  color: colorScheme.tertiaryContainer,
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                child: Icon(
-                  Icons.eco_outlined,
-                  color: colorScheme.onTertiaryContainer,
-                ),
-              ),
-
-              const SizedBox(width: 12),
-
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 4),
-
-                    Text(
-                      '${rubber.startWorkTime.formatTime()}  →  ${rubber.endWorkTime.formatTime()}',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    Text(rubber.dateLabel),
-                  ],
-                ),
-              ),
-              Expanded(child: Text(rubber.paid ? 'ရောင်းပြီး' : 'မရောင်းရသေး')),
-
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    '${rubber.rubberSliceCount}',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'slices',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SummaryCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String value;
-  final String suffix;
-
-  const _SummaryCard({
-    required this.icon,
-    required this.title,
-    required this.value,
-    this.suffix = '',
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: colorScheme.primary),
-
-          const SizedBox(height: 12),
-
-          Text(
-            title,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-
-          const SizedBox(height: 4),
-
-          RichText(
-            text: TextSpan(
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface,
-              ),
-              children: [
-                TextSpan(text: value),
-                if (suffix.isNotEmpty)
-                  TextSpan(
-                    text: suffix,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

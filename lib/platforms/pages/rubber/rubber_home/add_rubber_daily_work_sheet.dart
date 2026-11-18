@@ -91,10 +91,17 @@ class _AddRubberDailyWorkSheetState extends State<AddRubberDailyWorkSheet> {
         _siteId = widget.sites.first;
       }
     }
+    // last job
     final lastWork = widget.lastWork;
     if (lastWork != null) {
-      _startWorkTime = lastWork.startWorkTime;
-      _endWorkTime = lastWork.endWorkTime;
+      _startWorkTime = _startWorkTime.copyWith(
+        hour: lastWork.startWorkTime.hour,
+        minute: lastWork.startWorkTime.minute,
+      );
+      _endWorkTime = _endWorkTime.copyWith(
+        hour: lastWork.endWorkTime.hour,
+        minute: lastWork.endWorkTime.minute,
+      );
       _sliceController.text = lastWork.rubberSliceCount.toString();
     }
     setState(() {});
@@ -133,7 +140,7 @@ class _AddRubberDailyWorkSheetState extends State<AddRubberDailyWorkSheet> {
       initialDate: _endWorkTime,
       currentDate: _currentDate,
       firstDate: .new(2026),
-      lastDate: _currentDate,
+      lastDate: DateTime.now(),
     );
     if (res == null) return;
     if (!mounted) return;
