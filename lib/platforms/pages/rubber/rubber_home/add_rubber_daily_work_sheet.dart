@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:money_manager/core/models/rubber/rubber_daily_work.dart';
 import 'package:money_manager/core/models/worker/my_work_site.dart';
+import 'package:money_manager/ui/index.dart';
 import 'package:uuid/v4.dart';
 
 class AddRubberDailyWorkSheet extends StatefulWidget {
@@ -94,6 +95,7 @@ class _AddRubberDailyWorkSheetState extends State<AddRubberDailyWorkSheet> {
     if (lastWork != null) {
       _startWorkTime = lastWork.startWorkTime;
       _endWorkTime = lastWork.endWorkTime;
+      _sliceController.text = lastWork.rubberSliceCount.toString();
     }
     setState(() {});
   }
@@ -218,11 +220,22 @@ class _AddRubberDailyWorkSheetState extends State<AddRubberDailyWorkSheet> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                '${widget.editWork == null ? 'Add' : 'Edit'} Daily Work',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                children: [
+                  Text(
+                    '${widget.editWork == null ? 'Add' : 'Edit'} Daily Work',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      context.pop();
+                    },
+                    icon: Icon(Icons.close_rounded),
+                  ),
+                ],
               ),
 
               const SizedBox(height: 24),

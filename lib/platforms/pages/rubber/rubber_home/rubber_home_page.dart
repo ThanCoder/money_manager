@@ -132,26 +132,13 @@ class _RubberHomePageState extends State<RubberHomePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // final colorScheme = theme.colorScheme;
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.site.title),
-        actions: [
-          if (TPlatform.isDesktop)
-            IconButton(
-              onPressed: init,
-              icon: const Icon(Icons.refresh_rounded),
-            ),
-          IconButton(onPressed: showMenu, icon: const Icon(Icons.more_vert)),
-        ],
-      ),
-
       body: RefreshIndicator.adaptive(
         onRefresh: init,
         child: CustomScrollView(
           physics: AlwaysScrollableScrollPhysics(),
           slivers: [
+            _appbar(),
             SliverPadding(
               padding: const EdgeInsets.all(16),
               sliver: _header(theme),
@@ -171,6 +158,20 @@ class _RubberHomePageState extends State<RubberHomePage> {
         icon: const Icon(Icons.add),
         label: const Text('Daily Work'),
       ),
+    );
+  }
+
+  SliverAppBar _appbar() {
+    return SliverAppBar(
+      snap: true,
+      floating: true,
+      pinned: false,
+      title: Text(widget.site.title),
+      actions: [
+        if (TPlatform.isDesktop)
+          IconButton(onPressed: init, icon: const Icon(Icons.refresh_rounded)),
+        IconButton(onPressed: showMenu, icon: const Icon(Icons.more_vert)),
+      ],
     );
   }
 

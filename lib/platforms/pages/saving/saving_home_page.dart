@@ -141,12 +141,6 @@ class _SavingHomePageState extends State<SavingHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          if (TPlatform.isDesktop)
-            IconButton(onPressed: init, icon: Icon(Icons.refresh_outlined)),
-        ],
-      ),
       body: StreamBuilder(
         stream: con.events.whereType<SavingDataChanged>(),
         builder: (context, asyncSnapshot) {
@@ -156,6 +150,19 @@ class _SavingHomePageState extends State<SavingHomePage> {
           return CustomScrollView(
             physics: AlwaysScrollableScrollPhysics(),
             slivers: [
+              SliverAppBar(
+                snap: true,
+                floating: true,
+                pinned: false,
+                actions: [
+                  if (TPlatform.isDesktop)
+                    IconButton(
+                      onPressed: init,
+                      icon: Icon(Icons.refresh_outlined),
+                    ),
+                ],
+              ),
+
               SliverList.list(children: [_header]),
               SliverPadding(
                 padding: .symmetric(vertical: 10, horizontal: 15),
